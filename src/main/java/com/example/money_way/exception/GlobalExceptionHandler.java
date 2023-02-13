@@ -1,5 +1,4 @@
 package com.example.money_way.exception;
-import com.example.money_way.dto.response.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -50,6 +49,14 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
     public ApiResponse<String> handleUserNotFoundException(UserNotFound ex){
+        logger.error(ex.getMessage());
+        return  new ApiResponse<>("Failed","Error: "+ex.getMessage(), null);
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ResponseBody
+    public ApiResponse<String> handleInvalidCredentialsException(InvalidCredentialsException ex){
         logger.error(ex.getMessage());
         return  new ApiResponse<>("Failed","Error: "+ex.getMessage(), null);
     }
