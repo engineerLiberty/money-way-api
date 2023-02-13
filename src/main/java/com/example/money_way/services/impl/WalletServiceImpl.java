@@ -26,7 +26,7 @@ public class WalletServiceImpl implements WalletService {
     @Override
     public ApiResponse<CreateWalletResponse> createWallet(CreateWalletRequest request) {
 
-        String url = "https://api.flutterwave.com/v3/payout-subaccounts";
+        String url = "https://api.flutterwave.com/v3/virtual-account-numbers";
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + FLW_SECRET_KEY);

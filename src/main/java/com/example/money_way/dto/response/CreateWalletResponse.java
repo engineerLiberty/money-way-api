@@ -12,16 +12,17 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Builder
 public class CreateWalletResponse {
-    private Long id;
-    private String account_reference;
-    private String account_name;
-    private String barter_id;
-    private String email;
-    private String mobilenumber;
-    private String country;
-    private String nuban;
+    private String response_code;
+    private String response_message;
+    private String flw_ref;
+    private String order_ref;
+    private String account_number;
+    private String frequency;
     private String bank_name;
-    private String bank_code;
-    private String status;
     private String created_at;
+    private String expiry_date;
+    private String note;
+    private String amount;
+
 }
+
