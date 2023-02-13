@@ -14,6 +14,8 @@ import javax.persistence.MappedSuperclass;
 @MappedSuperclass
 public abstract class Person extends Base{
     @Column(nullable = false)
+    private Long userId;
+    @Column(nullable = false)
     private String firstName;
     @Column(nullable = false)
     private String lastName;
@@ -25,8 +27,7 @@ public abstract class Person extends Base{
     private String password;
     private String imageUrl;
     private String address;
+    private boolean verified;
     @Enumerated(EnumType.STRING)
     private Role role;
-
-
 }
