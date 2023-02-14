@@ -1,5 +1,5 @@
 package com.example.money_way.exception;
-import com.example.money_way.dto.ApiResponse;
+import com.example.money_way.dto.response.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -52,6 +52,15 @@ public class GlobalExceptionHandler {
     public ApiResponse<String> handleUserNotFoundException(UserNotFound ex){
         logger.error(ex.getMessage());
         return  new ApiResponse<>("Failed","Error: "+ex.getMessage(), null);
+    }
+
+    //Catches unauthorized access exceptions thrown by Spring Security even before the controller is executed
+    @ExceptionHandler(org.springframework.security.core.AuthenticationException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseBody
+    public ApiResponse<String> handleUnAuthorizedException(org.springframework.security.core.AuthenticationException ex){
+        logger.error(ex.getMessage());
+        return  new ApiResponse<>("Failed", ex.getMessage(),null);
     }
 
 }

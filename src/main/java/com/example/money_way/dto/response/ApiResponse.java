@@ -1,4 +1,4 @@
-package com.example.money_way.dto;
+package com.example.money_way.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
