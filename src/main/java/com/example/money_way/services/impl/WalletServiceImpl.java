@@ -3,6 +3,11 @@ package com.example.money_way.services.impl;
 import com.example.money_way.dto.request.CreateWalletRequest;
 import com.example.money_way.dto.response.ApiResponse;
 import com.example.money_way.dto.response.CreateWalletResponse;
+import com.example.money_way.exception.ResourceNotFoundException;
+import com.example.money_way.model.User;
+import com.example.money_way.model.Wallet;
+import com.example.money_way.repository.UserRepository;
+import com.example.money_way.repository.WalletRepository;
 import com.example.money_way.services.WalletService;
 import com.example.money_way.utils.AppUtil;
 import lombok.RequiredArgsConstructor;
@@ -14,17 +19,21 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.math.BigDecimal;
+
 @Service
 @RequiredArgsConstructor
 public class WalletServiceImpl implements WalletService {
 
+    private final UserRepository userRepository;
+    private final WalletRepository walletRepository;
     private final RestTemplate restTemplate;
     private final AppUtil appUtil;
     @Value("${app.FLW_SECRET_KEY}")
     private String FLW_SECRET_KEY;
 
     @Override
-    public ApiResponse<CreateWalletResponse> createWallet(CreateWalletRequest request) {
+    public ApiResponse createWallet(CreateWalletRequest request) {
 
         String url = "https://api.flutterwave.com/v3/virtual-account-numbers";
 
@@ -38,15 +47,20 @@ public class WalletServiceImpl implements WalletService {
 
 
         CreateWalletResponse walletResponse;
-        if (apiResponse != null) {
+        if (apiResponse != null && apiResponse.getStatus().equalsIgnoreCase("SUCCESS")) {
             walletResponse = appUtil.getObjectMapper().convertValue(apiResponse.getData(), CreateWalletResponse.class);
+            User user = userRepository.findByEmail(request.getEmail()).get();
+            Wallet wallet = Wallet.builder()
+                    .userId(user.getId())
+                    .bankName(walletResponse.getBank_name())
+                    .accountNumber(walletResponse.getAccount_number())
+                    .balance(BigDecimal.valueOf(0.00))
+                    .build();
+            walletRepository.save(wallet);
         }else{
-            throw new RuntimeException("Wallet Creation failed: An error has occurred");
+            throw new ResourceNotFoundException("Wallet Creation failed: An error has occurred");
         }
 
-        return ApiResponse.<CreateWalletResponse>builder()
-                .data(walletResponse)
-                .message(apiResponse.getMessage())
-                .status(apiResponse.getStatus()).build();
+        return new ApiResponse("Success", "Wallet created successfully", null);
     }
 }

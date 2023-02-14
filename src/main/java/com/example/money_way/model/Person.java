@@ -14,8 +14,6 @@ import javax.persistence.MappedSuperclass;
 @MappedSuperclass
 public abstract class Person extends Base{
     @Column(nullable = false)
-    private Long userId;
-    @Column(nullable = false)
     private String firstName;
     @Column(nullable = false)
     private String lastName;
