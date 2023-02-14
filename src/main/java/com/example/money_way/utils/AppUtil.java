@@ -26,6 +26,7 @@ public class AppUtil {
     private UserRepository userRepository;
 
 
+
     public User getLoggedInUser() throws ResourceNotFoundException {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
