@@ -88,7 +88,7 @@ public class AppUtil {
         return  number;
     }
 
-    public Long generateOTP(){
+    public Long generateRandomCode(){
         Random rnd = new Random();
         Long number = (long) rnd.nextInt(999999);
         return  number;
@@ -102,7 +102,7 @@ public class AppUtil {
             return null;
         }
     }
-    public  Object getObject(String content, Class cls){
+    public  Object getObjectFromString(String content, Class cls){
         try {
             ObjectMapper mapper = new ObjectMapper();
             return mapper.readValue(content,cls);
