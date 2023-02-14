@@ -1,4 +1,5 @@
 package com.example.money_way.exception;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -53,12 +54,15 @@ public class GlobalExceptionHandler {
         return  new ApiResponse<>("Failed","Error: "+ex.getMessage(), null);
     }
 
-    @ExceptionHandler(InvalidCredentialsException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
+
+    //Catches unauthorized access exceptions thrown by Spring Security even before the controller is executed
+    @ExceptionHandler(org.springframework.security.core.AuthenticationException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
     @ResponseBody
-    public ApiResponse<String> handleInvalidCredentialsException(InvalidCredentialsException ex){
+    public ApiResponse<String> handleUnAuthorizedException(org.springframework.security.core.AuthenticationException ex){
         logger.error(ex.getMessage());
-        return  new ApiResponse<>("Failed","Error: "+ex.getMessage(), null);
+        return  new ApiResponse<>("Failed", ex.getMessage(),null);
+
     }
 
 }

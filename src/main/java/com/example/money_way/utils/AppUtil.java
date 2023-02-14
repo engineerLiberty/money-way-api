@@ -10,53 +10,45 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+
 @Component
 public class AppUtil {
+
     @Autowired
     private UserRepository userRepository;
-    private static AppUtil instance = null;
-    private AppUtil(){}
-    public static AppUtil getInstance() {
-        if (instance == null) {
-            return new AppUtil();
-        }
-        return instance;
-    }
+
+
     public User getLoggedInUser() throws ResourceNotFoundException {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         return userRepository.findByEmail(((UserDetails)principal).getUsername())
                 .orElseThrow(() -> new UserNotFound("Error getting logged in user"));
     }
-    public List<String> split(String delimitedString){
+    public List<String> splitStringIntoAList(String delimitedString){
+
         if (delimitedString!=null)
             return  Arrays.stream(delimitedString.split(",")).collect(Collectors.toList());
         return null;
     }
-    private final Logger logger = LoggerFactory.getLogger(AppUtil.class);
-    public void log(String message) {
-        logger.info(message);
-    }
-    public void print(Object obj){
-        try {
-            logger.info(new ObjectMapper().writeValueAsString(obj));
-        }
-        catch (Exception ex){
-            ex.printStackTrace();
-        }
-    }
+
+
     public  String generateSerialNumber(String prefix) {
         Random rand = new Random();
         long x = (long)(rand.nextDouble()*100000000000000L);
         return  prefix + String.format("%014d", x);
     }
-    public boolean validImage(String fileName)
-    {
+
+
+    public boolean isValidImage(String fileName) {
+    
         String regex = "(.*/)*.+\\.(png|jpg|gif|bmp|jpeg|PNG|JPG|GIF|BMP|JPEG)$";
         Pattern p = Pattern.compile(regex);
         if (fileName == null) {
@@ -65,10 +57,13 @@ public class AppUtil {
         Matcher m = p.matcher(fileName);
         return m.matches();
     }
-    public boolean validEmail(String email) {
+
+
+    public boolean isValidEmail(String email) {
         String regex = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
         return email.matches(regex);
     }
+
     public String getFormattedNumber(String number){
         number=number.trim();
         if(number.startsWith("0"))
@@ -84,12 +79,15 @@ public class AppUtil {
         }
         return  number;
     }
-    public Long generateOTP(){
+
+    public Long generateRandomCode(){
         Random rnd = new Random();
         Long number = (long) rnd.nextInt(999999);
         return  number;
     }
-    public String  getString(Object o){
+
+    public String  getStringFromObject(Object o){
+
         try {
             ObjectMapper mapper = new ObjectMapper();
             return mapper.writeValueAsString(o);
@@ -98,7 +96,9 @@ public class AppUtil {
             return null;
         }
     }
-    public  Object getObject(String content, Class cls){
+
+    public  Object getObjectFromString(String content, Class cls){
+
         try {
             ObjectMapper mapper = new ObjectMapper();
             return mapper.readValue(content,cls);
@@ -107,8 +107,10 @@ public class AppUtil {
             return null;
         }
     }
-    public ObjectMapper getMapper(){
-        ObjectMapper mapper= new ObjectMapper();
-        return mapper;
+
+    public ObjectMapper getObjectMapper(){
+        return new ObjectMapper();
     }
+
 }
+
