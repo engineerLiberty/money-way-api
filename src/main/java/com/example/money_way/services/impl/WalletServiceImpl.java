@@ -1,6 +1,5 @@
 package com.example.money_way.services.impl;
 
-
 import com.example.money_way.dto.request.CreateWalletRequest;
 import com.example.money_way.dto.response.ApiResponse;
 import com.example.money_way.dto.response.CreateWalletResponse;
@@ -20,6 +19,7 @@ import org.springframework.web.client.RestTemplate;
 public class WalletServiceImpl implements WalletService {
 
     private final RestTemplate restTemplate;
+    private final AppUtil appUtil;
     @Value("${app.FLW_SECRET_KEY}")
     private String FLW_SECRET_KEY;
 
@@ -36,11 +36,10 @@ public class WalletServiceImpl implements WalletService {
 
         ApiResponse apiResponse = restTemplate.exchange(url, HttpMethod.POST, entity, ApiResponse.class).getBody();
 
-        AppUtil appUtil = AppUtil.getInstance();
 
         CreateWalletResponse walletResponse;
         if (apiResponse != null) {
-            walletResponse = appUtil.getMapper().convertValue(apiResponse.getData(), CreateWalletResponse.class);
+            walletResponse = appUtil.getObjectMapper().convertValue(apiResponse.getData(), CreateWalletResponse.class);
         }else{
             throw new RuntimeException("Wallet Creation failed: An error has occurred");
         }
