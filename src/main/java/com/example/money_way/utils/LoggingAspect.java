@@ -18,7 +18,7 @@ public class LoggingAspect {
      * Logs any method in the services package before it is executed
      * @param joinPoint: has the details of the method being executed
      */
-    @Before("execution (* com.example.money_way.services.*.*(..))")
+    @Before("execution (* com.example.money_way.service.*.*(..))")
     public void logBefore(JoinPoint joinPoint) {
         logger.info(joinPoint.getSignature().getName() + " method started. [" +joinPoint.getSignature().getDeclaringTypeName()+"]");
     }
@@ -27,7 +27,7 @@ public class LoggingAspect {
      * Logs any method in the services package that executes successfully
      * @param joinPoint: has the details of the method being executed
      */
-    @AfterReturning("execution (* com.example.money_way.services.*.*(..))")
+    @AfterReturning("execution (* com.example.money_way.service.*.*(..))")
     public void logAfter(JoinPoint joinPoint) {
         logger.info(joinPoint.getSignature().getName() + " method successfully executed. [" +joinPoint.getSignature().getDeclaringTypeName()+"]");
     }
