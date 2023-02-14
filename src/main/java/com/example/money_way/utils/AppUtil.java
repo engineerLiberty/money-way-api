@@ -31,23 +31,10 @@ public class AppUtil {
         return userRepository.findByEmail(((UserDetails)principal).getUsername())
                 .orElseThrow(() -> new UserNotFound("Error getting logged in user"));
     }
-    public List<String> split(String delimitedString){
+    public List<String> splitStringIntoAList(String delimitedString){
         if (delimitedString!=null)
             return  Arrays.stream(delimitedString.split(",")).collect(Collectors.toList());
         return null;
-    }
-    private final Logger logger = LoggerFactory.getLogger(AppUtil.class);
-
-    public void log(String message) {
-        logger.info(message);
-    }
-    public void print(Object obj){
-        try {
-            logger.info(new ObjectMapper().writeValueAsString(obj));
-        }
-        catch (Exception ex){
-            ex.printStackTrace();
-        }
     }
 
     public  String generateSerialNumber(String prefix) {
@@ -56,7 +43,7 @@ public class AppUtil {
         return  prefix + String.format("%014d", x);
     }
 
-    public boolean validImage(String fileName)
+    public boolean isValidImage(String fileName)
     {
         String regex = "(.*/)*.+\\.(png|jpg|gif|bmp|jpeg|PNG|JPG|GIF|BMP|JPEG)$";
         Pattern p = Pattern.compile(regex);
@@ -67,7 +54,7 @@ public class AppUtil {
         return m.matches();
     }
 
-    public boolean validEmail(String email) {
+    public boolean isValidEmail(String email) {
         String regex = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
         return email.matches(regex);
     }
@@ -93,7 +80,7 @@ public class AppUtil {
         Long number = (long) rnd.nextInt(999999);
         return  number;
     }
-    public String  getString(Object o){
+    public String  getStringFromObject(Object o){
         try {
             ObjectMapper mapper = new ObjectMapper();
             return mapper.writeValueAsString(o);
@@ -111,9 +98,8 @@ public class AppUtil {
             return null;
         }
     }
-    public ObjectMapper getMapper(){
-        ObjectMapper mapper= new ObjectMapper();
-        return mapper;
+    public ObjectMapper getObjectMapper(){
+        return new ObjectMapper();
     }
 
 }
