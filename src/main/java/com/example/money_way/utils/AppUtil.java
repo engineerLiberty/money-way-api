@@ -41,11 +41,13 @@ public class AppUtil {
         return userRepository.findByEmail(((UserDetails)principal).getUsername())
                 .orElseThrow(() -> new UserNotFound("Error getting logged in user"));
     }
-    public List<String> split(String delimitedString){
+
+    public List<String> splitStringIntoAList(String delimitedString){
         if (delimitedString!=null)
             return  Arrays.stream(delimitedString.split(",")).collect(Collectors.toList());
         return null;
     }
+
     private final Logger logger = LoggerFactory.getLogger(AppUtil.class);
 
     public void log(String message) {
@@ -66,7 +68,7 @@ public class AppUtil {
         return  prefix + String.format("%014d", x);
     }
 
-    public boolean validImage(String fileName)
+    public boolean isValidImage(String fileName)
     {
         String regex = "(.*/)*.+\\.(png|jpg|gif|bmp|jpeg|PNG|JPG|GIF|BMP|JPEG)$";
         Pattern p = Pattern.compile(regex);
@@ -77,7 +79,7 @@ public class AppUtil {
         return m.matches();
     }
 
-    public boolean validEmail(String email) {
+    public boolean isValidEmail(String email) {
         String regex = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
         return email.matches(regex);
     }
@@ -98,12 +100,13 @@ public class AppUtil {
         return  number;
     }
 
-    public Long generateOTP(){
+    public Long generateRandomCode(){
         Random rnd = new Random();
         Long number = (long) rnd.nextInt(999999);
         return  number;
     }
-    public String  getString(Object o){
+
+    public String  getStringFromObject(Object o){
         try {
             ObjectMapper mapper = new ObjectMapper();
             return mapper.writeValueAsString(o);
@@ -112,7 +115,8 @@ public class AppUtil {
             return null;
         }
     }
-    public  Object getObject(String content, Class cls){
+    
+    public  Object getObjectFromString(String content, Class cls){
         try {
             ObjectMapper mapper = new ObjectMapper();
             return mapper.readValue(content,cls);
@@ -121,9 +125,9 @@ public class AppUtil {
             return null;
         }
     }
-    public ObjectMapper getMapper(){
-        ObjectMapper mapper= new ObjectMapper();
-        return mapper;
+
+    public ObjectMapper getObjectMapper(){
+        return new ObjectMapper();
     }
 
 }

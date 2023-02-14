@@ -54,4 +54,13 @@ public class GlobalExceptionHandler {
         return  new ApiResponse<>("Failed","Error: "+ex.getMessage(), null);
     }
 
+    //Catches unauthorized access exceptions thrown by Spring Security even before the controller is executed
+    @ExceptionHandler(org.springframework.security.core.AuthenticationException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseBody
+    public ApiResponse<String> handleUnAuthorizedException(org.springframework.security.core.AuthenticationException ex){
+        logger.error(ex.getMessage());
+        return  new ApiResponse<>("Failed", ex.getMessage(),null);
+    }
+
 }
