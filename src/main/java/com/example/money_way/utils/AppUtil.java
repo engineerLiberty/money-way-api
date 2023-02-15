@@ -5,6 +5,8 @@ import com.example.money_way.exception.UserNotFound;
 import com.example.money_way.model.User;
 import com.example.money_way.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
