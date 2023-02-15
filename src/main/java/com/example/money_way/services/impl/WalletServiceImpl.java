@@ -2,8 +2,9 @@ package com.example.money_way.services.impl;
 
 
 import com.example.money_way.dto.request.CreateWalletRequest;
-import com.example.money_way.dto.response.ApiResponse;            
+import com.example.money_way.dto.response.ApiResponse;
 import com.example.money_way.dto.response.CreateWalletResponse;
+import com.example.money_way.dto.response.ViewWalletResponseDto;
 import com.example.money_way.exception.ResourceNotFoundException;
 import com.example.money_way.model.User;
 import com.example.money_way.model.Wallet;
@@ -13,15 +14,14 @@ import com.example.money_way.services.WalletService;
 import com.example.money_way.utils.AppUtil;
 import com.example.money_way.utils.EnvironmentVariables;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
 import java.math.BigDecimal;
-import com.example.money_way.dto.response.ViewWalletResponseDto;
 
 
 @Service
@@ -65,7 +65,6 @@ public class WalletServiceImpl implements WalletService {
 
         return new ApiResponse("Success", "Wallet created successfully", null);
     }
-}
    
     @Override
     public ApiResponse viewBalance() {
