@@ -13,5 +13,6 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class ViewWalletResponseDto {
 
+    private Long walletId;
     private BigDecimal balance;
 }

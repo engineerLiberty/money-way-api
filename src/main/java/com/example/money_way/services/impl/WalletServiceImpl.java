@@ -15,18 +15,21 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class WalletServiceImpl implements WalletService {
     private final WalletRepository walletRepository;
+
+    private final AppUtil appUtil;
     @Override
     public ApiResponse viewBalance() {
 
         ViewWalletResponseDto viewWalletResponseDto;
-        AppUtil appUtil1 = AppUtil.getInstance();
 
-        User user = appUtil1.getLoggedInUser();
+
+        User user = appUtil.getLoggedInUser();
 
         Wallet wallet = walletRepository.findByUserId(user.getId())
                 .orElseThrow(()-> new ResourceNotFoundException("Wallet Not Found"));
 
         viewWalletResponseDto = ViewWalletResponseDto.builder()
+                .walletId(wallet.getId())
                 .balance(wallet.getBalance())
                 .build();
 

@@ -24,16 +24,6 @@ public class AppUtil {
     @Autowired
     private UserRepository userRepository;
 
-    private static AppUtil instance = null;
-
-    private AppUtil(){}
-
-    public static AppUtil getInstance() {
-        if (instance == null) {
-            return new AppUtil();
-        }
-        return instance;
-    }
 
     public User getLoggedInUser() throws ResourceNotFoundException {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
