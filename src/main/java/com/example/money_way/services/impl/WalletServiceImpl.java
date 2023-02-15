@@ -1,7 +1,8 @@
 package com.example.money_way.services.impl;
 
+
 import com.example.money_way.dto.request.CreateWalletRequest;
-import com.example.money_way.dto.response.ApiResponse;
+import com.example.money_way.dto.response.ApiResponse;            
 import com.example.money_way.dto.response.CreateWalletResponse;
 import com.example.money_way.exception.ResourceNotFoundException;
 import com.example.money_way.model.User;
@@ -19,12 +20,14 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
 import java.math.BigDecimal;
+import com.example.money_way.dto.response.ViewWalletResponseDto;
+
 
 @Service
 @RequiredArgsConstructor
 public class WalletServiceImpl implements WalletService {
+
 
     private final UserRepository userRepository;
     private final WalletRepository walletRepository;
@@ -62,4 +65,28 @@ public class WalletServiceImpl implements WalletService {
 
         return new ApiResponse("Success", "Wallet created successfully", null);
     }
+}
+   
+    @Override
+    public ApiResponse viewBalance() {
+
+        ViewWalletResponseDto viewWalletResponseDto;
+
+
+        User user = appUtil.getLoggedInUser();
+
+        Wallet wallet = walletRepository.findByUserId(user.getId())
+                .orElseThrow(()-> new ResourceNotFoundException("Wallet Not Found"));
+
+        viewWalletResponseDto = ViewWalletResponseDto.builder()
+                .walletId(wallet.getId())
+                .balance(wallet.getBalance())
+                .build();
+
+        return ApiResponse.builder()
+                .status("SUCCESS")
+                .data(viewWalletResponseDto)
+                .build();
+    }
+
 }
