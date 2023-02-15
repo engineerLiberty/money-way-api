@@ -15,6 +15,6 @@ import javax.persistence.Table;
 @Table(name = "user_tbl")
 public class User extends Person{
     @Column(nullable = false)
-    private Integer pin;
+    private String pin;
 }
 
