@@ -17,11 +17,8 @@ import java.math.BigDecimal;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Builder
 public class CreateWalletRequest {
-    @NotNull(message = "Field cannot be empty, provide a valid email")
-    @Email(message = "provide a valid email")
     private String email;
 
-    @Size(min = 11, max = 11)
     private String bvn;
 
     private String currency;

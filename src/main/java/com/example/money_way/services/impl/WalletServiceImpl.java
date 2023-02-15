@@ -10,6 +10,7 @@ import com.example.money_way.repository.UserRepository;
 import com.example.money_way.repository.WalletRepository;
 import com.example.money_way.services.WalletService;
 import com.example.money_way.utils.AppUtil;
+import com.example.money_way.utils.EnvironmentVariables;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -29,21 +30,19 @@ public class WalletServiceImpl implements WalletService {
     private final WalletRepository walletRepository;
     private final RestTemplate restTemplate;
     private final AppUtil appUtil;
-    @Value("${app.FLW_SECRET_KEY}")
-    private String FLW_SECRET_KEY;
+    private final EnvironmentVariables environmentVariables;
 
     @Override
     public ApiResponse createWallet(CreateWalletRequest request) {
 
-        String url = "https://api.flutterwave.com/v3/virtual-account-numbers";
-
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + FLW_SECRET_KEY);
+        headers.add("Authorization", "Bearer " + environmentVariables.getFLW_SECRET_KEY());
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<CreateWalletRequest> entity = new HttpEntity<>(request, headers);
 
-        ApiResponse apiResponse = restTemplate.exchange(url, HttpMethod.POST, entity, ApiResponse.class).getBody();
+        ApiResponse apiResponse = restTemplate.exchange(environmentVariables.getCreateWalletUrl(),
+                HttpMethod.POST, entity, ApiResponse.class).getBody();
 
 
         CreateWalletResponse walletResponse;

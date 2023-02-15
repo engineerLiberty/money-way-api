@@ -8,10 +8,6 @@ import org.springframework.web.client.RestTemplate;
 @SpringBootApplication
 public class MoneyWayApplication {
 
-    @Bean
-    RestTemplate getRestTemplate(){
-        return new RestTemplate();
-    }
     public static void main(String[] args) {
         SpringApplication.run(MoneyWayApplication.class, args);
     }
