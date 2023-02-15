@@ -33,6 +33,7 @@ public class AppUtil {
         return userRepository.findByEmail(((UserDetails)principal).getUsername())
                 .orElseThrow(() -> new UserNotFound("Error getting logged in user"));
     }
+
     public List<String> splitStringIntoAList(String delimitedString){
 
         if (delimitedString!=null)
@@ -40,6 +41,19 @@ public class AppUtil {
         return null;
     }
 
+    private final Logger logger = LoggerFactory.getLogger(AppUtil.class);
+
+    public void log(String message) {
+        logger.info(message);
+    }
+    public void print(Object obj){
+        try {
+            logger.info(new ObjectMapper().writeValueAsString(obj));
+        }
+        catch (Exception ex){
+            ex.printStackTrace();
+        }
+    }
 
     public  String generateSerialNumber(String prefix) {
         Random rand = new Random();
@@ -98,6 +112,7 @@ public class AppUtil {
         }
     }
 
+    
     public  Object getObjectFromString(String content, Class cls){
 
         try {
