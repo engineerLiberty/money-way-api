@@ -1,7 +1,7 @@
 package com.example.money_way.controller;
 
-import com.example.money_way.dto.PasswordResetDTO;
-import com.example.money_way.exception.ApiResponse;
+import com.example.money_way.dto.request.PasswordResetDTO;
+import com.example.money_way.dto.response.ApiResponse;
 import com.example.money_way.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,7 +23,7 @@ public class UserController{
     @PutMapping("/reset-password")
 
 ResponseEntity<ApiResponse<String>> resetPassword (@Valid @RequestBody PasswordResetDTO passwordResetDto) {
-        ApiResponse apiResponse = userService.updatePassword(passwordResetDto);
+        ApiResponse<String> apiResponse = userService.updatePassword(passwordResetDto);
         return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
     }
 

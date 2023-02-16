@@ -1,5 +1,6 @@
 package com.example.money_way.exception;
 
+import com.example.money_way.dto.response.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,7 @@ public class GlobalExceptionHandler {
     @ResponseBody
     public ApiResponse<String> handleNotFoundException(ResourceNotFoundException ex){
         logger.error(ex.getMessage());
-        return  new ApiResponse<>("Failed", ex.getMessage(), null);
+        return  new ApiResponse<>("Failed","Error: " + ex.getMessage(), null);
     }
 
     @ExceptionHandler(ValidationException.class)
@@ -46,10 +47,10 @@ public class GlobalExceptionHandler {
         return  new ApiResponse<>("Failed","Error: "+ex.getMessage(), null);
     }
 
-    @ExceptionHandler(UserNotFound.class)
+    @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
-    public ApiResponse<String> handleUserNotFoundException(UserNotFound ex){
+    public ApiResponse<String> handleUserNotFoundException(UserNotFoundException ex){
         logger.error(ex.getMessage());
         return  new ApiResponse<>("Failed","Error: "+ex.getMessage(), null);
     }
@@ -61,8 +62,17 @@ public class GlobalExceptionHandler {
     @ResponseBody
     public ApiResponse<String> handleUnAuthorizedException(org.springframework.security.core.AuthenticationException ex){
         logger.error(ex.getMessage());
-        return  new ApiResponse<>("Failed", ex.getMessage(),null);
+        return  new ApiResponse<>("Failed","Error: " + ex.getMessage(),null);
 
     }
+    @ExceptionHandler(InvalidCredentialsException.class)
+    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+    @ResponseBody
+    public ApiResponse<String> handleInvalidCredentialsException(InvalidCredentialsException ex){
+        logger.error(ex.getMessage());
+        return  new ApiResponse<>("Failed", "Error: " +ex.getMessage(),null);
+
+    }
+
 
 }

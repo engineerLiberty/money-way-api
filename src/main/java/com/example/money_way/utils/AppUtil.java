@@ -1,6 +1,6 @@
 package com.example.money_way.utils;
 import com.example.money_way.exception.ResourceNotFoundException;
-import com.example.money_way.exception.UserNotFound;
+import com.example.money_way.exception.UserNotFoundException;
 import com.example.money_way.model.User;
 import com.example.money_way.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,7 +31,7 @@ public class AppUtil {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         return userRepository.findByEmail(((UserDetails)principal).getUsername())
-                .orElseThrow(() -> new UserNotFound("Error getting logged in user"));
+                .orElseThrow(() -> new UserNotFoundException("Error getting logged in user"));
     }
 
     public List<String> splitStringIntoAList(String delimitedString){

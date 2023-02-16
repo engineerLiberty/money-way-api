@@ -1,8 +1,8 @@
 package com.example.money_way.exception;
 
-public class UserNotFound extends RuntimeException{
+public class UserNotFoundException extends RuntimeException{
 
-    public UserNotFound(String msg) {
+    public UserNotFoundException(String msg) {
         super(msg);
     }
 }

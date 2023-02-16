@@ -1,4 +1,4 @@
-package com.example.money_way.dto;
+package com.example.money_way.dto.request;
 
 
 import lombok.*;
@@ -12,12 +12,10 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 
 public class PasswordResetDTO {
-    @NotNull(message = "Enter your current password")
+    @NotNull(message = "Password must not be empty")
     private String currentPassword;
 
-    @NotNull(message = "Enter a new password")
+    @NotNull(message = "Password must not be empty")
     private String newPassword;
 
-    @NotNull(message = "Confirm your new password")
-    private String confirmNewPassword;
 }
