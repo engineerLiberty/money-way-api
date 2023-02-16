@@ -1,4 +1,4 @@
-package com.example.money_way.services;
+package com.example.money_way.service;
 
 import com.example.money_way.dto.request.CreateWalletRequest;
 import com.example.money_way.dto.response.ApiResponse;
