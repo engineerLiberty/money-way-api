@@ -62,5 +62,4 @@ public class GlobalExceptionHandler {
         logger.error(ex.getMessage());
         return  new ApiResponse<>("Failed", ex.getMessage(),null);
     }
-
 }

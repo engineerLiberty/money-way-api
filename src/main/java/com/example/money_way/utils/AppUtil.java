@@ -1,4 +1,5 @@
 package com.example.money_way.utils;
+
 import com.example.money_way.exception.ResourceNotFoundException;
 import com.example.money_way.exception.UserNotFound;
 import com.example.money_way.model.User;
