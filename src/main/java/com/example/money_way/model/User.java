@@ -16,5 +16,7 @@ import javax.persistence.Table;
 public class User extends Person{
     @Column(nullable = false)
     private Integer pin;
+    private String confirmationToken;
+    private boolean isActive;
 }
 
