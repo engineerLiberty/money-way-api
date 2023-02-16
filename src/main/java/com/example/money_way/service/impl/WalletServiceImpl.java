@@ -1,4 +1,4 @@
-package com.example.money_way.services.impl;
+package com.example.money_way.service.impl;
 
 
 import com.example.money_way.dto.request.CreateWalletRequest;
@@ -10,7 +10,7 @@ import com.example.money_way.model.User;
 import com.example.money_way.model.Wallet;
 import com.example.money_way.repository.UserRepository;
 import com.example.money_way.repository.WalletRepository;
-import com.example.money_way.services.WalletService;
+import com.example.money_way.service.WalletService;
 import com.example.money_way.utils.AppUtil;
 import com.example.money_way.utils.EnvironmentVariables;
 import lombok.RequiredArgsConstructor;
