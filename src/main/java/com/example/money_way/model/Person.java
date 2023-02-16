@@ -27,7 +27,7 @@ public abstract class Person extends Base{
     private String password;
     private String imageUrl;
     private String address;
-    private Boolean isActive;
+    private boolean verified;
     @Enumerated(EnumType.STRING)
     private Role role;
 

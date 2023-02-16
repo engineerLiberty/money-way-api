@@ -1,4 +1,5 @@
 package com.example.money_way.utils;
+
 import com.example.money_way.exception.ResourceNotFoundException;
 import com.example.money_way.exception.UserNotFound;
 import com.example.money_way.model.User;
@@ -31,10 +32,25 @@ public class AppUtil {
         return userRepository.findByEmail(((UserDetails)principal).getUsername())
                 .orElseThrow(() -> new UserNotFound("Error getting logged in user"));
     }
+
     public List<String> splitStringIntoAList(String delimitedString){
         if (delimitedString!=null)
             return  Arrays.stream(delimitedString.split(",")).collect(Collectors.toList());
         return null;
+    }
+
+    private final Logger logger = LoggerFactory.getLogger(AppUtil.class);
+
+    public void log(String message) {
+        logger.info(message);
+    }
+    public void print(Object obj){
+        try {
+            logger.info(new ObjectMapper().writeValueAsString(obj));
+        }
+        catch (Exception ex){
+            ex.printStackTrace();
+        }
     }
 
     public  String generateSerialNumber(String prefix) {
@@ -80,6 +96,7 @@ public class AppUtil {
         Long number = (long) rnd.nextInt(999999);
         return  number;
     }
+
     public String  getStringFromObject(Object o){
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -89,6 +106,7 @@ public class AppUtil {
             return null;
         }
     }
+    
     public  Object getObjectFromString(String content, Class cls){
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -98,6 +116,7 @@ public class AppUtil {
             return null;
         }
     }
+
     public ObjectMapper getObjectMapper(){
         return new ObjectMapper();
     }
