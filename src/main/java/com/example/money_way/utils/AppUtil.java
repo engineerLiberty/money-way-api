@@ -1,7 +1,7 @@
 package com.example.money_way.utils;
 
 import com.example.money_way.exception.ResourceNotFoundException;
-import com.example.money_way.exception.UserNotFound;
+import com.example.money_way.exception.UserNotFoundException;
 import com.example.money_way.model.User;
 import com.example.money_way.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,21 +19,24 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+
 @Component
 public class AppUtil {
 
     @Autowired
-    private UserRepository userRepository;
+    private  UserRepository userRepository;
+
 
 
     public User getLoggedInUser() throws ResourceNotFoundException {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         return userRepository.findByEmail(((UserDetails)principal).getUsername())
-                .orElseThrow(() -> new UserNotFound("Error getting logged in user"));
+                .orElseThrow(() -> new UserNotFoundException("Error getting logged in user"));
     }
 
     public List<String> splitStringIntoAList(String delimitedString){
+
         if (delimitedString!=null)
             return  Arrays.stream(delimitedString.split(",")).collect(Collectors.toList());
         return null;
@@ -59,8 +62,9 @@ public class AppUtil {
         return  prefix + String.format("%014d", x);
     }
 
-    public boolean isValidImage(String fileName)
-    {
+
+    public boolean isValidImage(String fileName) {
+    
         String regex = "(.*/)*.+\\.(png|jpg|gif|bmp|jpeg|PNG|JPG|GIF|BMP|JPEG)$";
         Pattern p = Pattern.compile(regex);
         if (fileName == null) {
@@ -69,6 +73,7 @@ public class AppUtil {
         Matcher m = p.matcher(fileName);
         return m.matches();
     }
+
 
     public boolean isValidEmail(String email) {
         String regex = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
@@ -98,6 +103,7 @@ public class AppUtil {
     }
 
     public String  getStringFromObject(Object o){
+
         try {
             ObjectMapper mapper = new ObjectMapper();
             return mapper.writeValueAsString(o);
@@ -106,8 +112,10 @@ public class AppUtil {
             return null;
         }
     }
+
     
     public  Object getObjectFromString(String content, Class cls){
+
         try {
             ObjectMapper mapper = new ObjectMapper();
             return mapper.readValue(content,cls);
@@ -122,3 +130,4 @@ public class AppUtil {
     }
 
 }
+
