@@ -27,17 +27,7 @@ public class UserServiceImplementation implements UserService {
     @Override
     public ResponseEntity<ApiResponse> signUp(SignUpDto signUpDto) throws ValidationException {
 
-        if(!(appUtils.isValidEmail(signUpDto.getEmail())))
-            throw new ValidationException("Email is not valid");
-
-        if(!(signUpDto.getConfirmPassword().equals(signUpDto.getPassword())))
-            throw new ValidationException("Passwords do not match");
-
-        if(signUpDto.getPin().length() != 4)
-            throw new ValidationException("Pin must be a four digit number");
-
         Boolean isUserExist = userRepository.existsByEmail(signUpDto.getEmail());
-
         if (isUserExist)
             throw new ValidationException("User Already Exists!");
 
@@ -48,20 +38,14 @@ public class UserServiceImplementation implements UserService {
         user.setPhoneNumber(signUpDto.getPhoneNumber());
         user.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
         user.setBvn(signUpDto.getBvn());
-        user.setPin(signUpDto.getPin());
+        user.setPin(passwordEncoder.encode(signUpDto.getPin()));
         String token = jwtUtils.generateSignUpConfirmationToken(signUpDto.getEmail());
         user.setIsActive(false);
         userRepository.save(user);
 
         String link = "Hello "  + signUpDto.getFirstName()  +
                 "Copy the token below to activate your account: " + token;
-        String subject = "MoneyWay";
-
-        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-        simpleMailMessage.setTo(signUpDto.getEmail());
-        simpleMailMessage.setSubject(subject);
-        simpleMailMessage.setText(link);
-        emailService.sendEmail(signUpDto.getEmail(),subject, simpleMailMessage.getText());
+        emailService.sendEmail(signUpDto.getEmail(),"MoneyWay: Verify Your Account", link);
 
         return ResponseEntity.ok(new ApiResponse<>("Successful", "SignUp Successful. Check your mail to activate your account", null));
     }
