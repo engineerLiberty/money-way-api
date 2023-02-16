@@ -1,7 +1,7 @@
 package com.example.money_way.configuration.security;
 
 
-import com.example.money_way.exception.UserNotFound;
+import com.example.money_way.exception.UserNotFoundException;
 import com.example.money_way.model.User;
 import com.example.money_way.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -25,7 +25,7 @@ public class CustomUserDetailService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() ->
-                        new UserNotFound("User not found with email: " + email));
+                        new UserNotFoundException("User not found with email: " + email));
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(), user.getPassword(), Collections.singleton(new SimpleGrantedAuthority(user.getRole().name())));
     }
