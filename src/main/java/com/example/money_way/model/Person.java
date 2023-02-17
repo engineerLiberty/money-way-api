@@ -22,12 +22,9 @@ public abstract class Person extends Base{
     @Column(unique = true, nullable = false)
     private String phoneNumber;
     @Column(nullable = false)
-    private String bvn;
-    @Column(nullable = false)
     private String password;
     private String imageUrl;
     private String address;
-    private boolean verified;
     @Enumerated(EnumType.STRING)
     private Role role;
 

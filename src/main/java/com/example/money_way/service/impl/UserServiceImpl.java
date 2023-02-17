@@ -1,35 +1,26 @@
 package com.example.money_way.service.impl;
 
 import com.example.money_way.configuration.mail.EmailService;
-import com.example.money_way.dto.request.CreateWalletRequest;
 import com.example.money_way.configuration.security.CustomUserDetailService;
 import com.example.money_way.configuration.security.JwtUtils;
-import com.example.money_way.dto.request.LoginRequestDto;
-import com.example.money_way.dto.request.PasswordResetDTO;
-import com.example.money_way.dto.request.VerifyTokenDto;
-import com.example.money_way.dto.request.SignUpDto;
+import com.example.money_way.dto.request.*;
 import com.example.money_way.dto.response.ApiResponse;
 import com.example.money_way.exception.InvalidCredentialsException;
 import com.example.money_way.exception.UserNotFoundException;
 import com.example.money_way.exception.ValidationException;
 import com.example.money_way.model.User;
-import com.example.money_way.model.Wallet;
 import com.example.money_way.repository.UserRepository;
 import com.example.money_way.service.UserService;
 import com.example.money_way.service.WalletService;
 import com.example.money_way.utils.AppUtil;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
-import com.example.money_way.configuration.security.CustomUserDetailService;
-import com.example.money_way.configuration.security.JwtUtils;
-import com.example.money_way.dto.request.LoginRequestDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
@@ -120,11 +111,11 @@ public class UserServiceImpl implements UserService {
         user.setBvn(signUpDto.getBvn());
         user.setPin(passwordEncoder.encode(signUpDto.getPin()));
         String token = jwtUtils.generateSignUpConfirmationToken(signUpDto.getEmail());
-        user.setVerified(false);
         userRepository.save(user);
 
-        String link = "Hello "  + signUpDto.getFirstName()  +
-                "Copy the token below to activate your account: " + token;
+        String URL = "http://localhost:8081/MoneyWay/api/v1/user/verify?token=" + token;
+        String link = "<h3>Hello "  + signUpDto.getFirstName()  +"<br> Click the link below to activate your account <a href=" + URL + "><br>Activate</a></h3>";
+
         emailService.sendEmail(signUpDto.getEmail(),"MoneyWay: Verify Your Account", link);
 
         return ResponseEntity.ok(new ApiResponse<>("Successful", "SignUp Successful. Check your mail to activate your account", null));

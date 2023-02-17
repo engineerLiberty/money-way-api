@@ -25,7 +25,7 @@ public class SignUpDto {
     @NotBlank(message = "password cannot be blank")
     private String password;
 
-    @NotBlank(message = "password cannot be blank")
+    @NotBlank(message = "bvn cannot be blank")
     private String bvn;
 
     @Size(min = 4, max = 4)
