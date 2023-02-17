@@ -1,6 +1,7 @@
 package com.example.money_way.service.impl;
 
 import com.example.money_way.configuration.mail.EmailService;
+import com.example.money_way.dto.request.CreateWalletRequest;
 import com.example.money_way.dto.request.PasswordResetDTO;
 import com.example.money_way.dto.request.VerifyTokenDto;
 import com.example.money_way.dto.response.ApiResponse;
@@ -10,6 +11,7 @@ import com.example.money_way.model.User;
 import com.example.money_way.model.Wallet;
 import com.example.money_way.repository.UserRepository;
 import com.example.money_way.service.UserService;
+import com.example.money_way.service.WalletService;
 import com.example.money_way.utils.AppUtil;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +38,8 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final AppUtil appUtil;
     private final EmailService emailService;
-    
+
+    private final WalletService walletService;
     private final AuthenticationManager authenticationManager;
     private final CustomUserDetailService customUserDetailService;
     private final JwtUtils jwtUtils;
@@ -83,21 +86,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public ApiResponse verifyLink(VerifyTokenDto verifyTokenDto) {
 
-        ApiResponse apiResponse = new ApiResponse<>();
-
-        Optional<User> existingUser = userRepository.findByConfirmationToken(appUtil.getLoggedInUser().getConfirmationToken());
-        Wallet wallet = new Wallet();
+        Optional<User> existingUser = userRepository.findByConfirmationToken(verifyTokenDto.getToken());
         if (existingUser.isPresent()) {
             existingUser.get().setConfirmationToken(null);
             existingUser.get().setActive(true);
-            wallet.setUserId(appUtil.getLoggedInUser().getId());
-            return apiResponse.builder().message("Success").status("Account created successfully").build();
+            CreateWalletRequest request = new CreateWalletRequest();
+            request.setEmail(existingUser.get().getEmail());
+            request.setBvn(existingUser.get().getBvn());
+            walletService.createWallet(request);
+            return ApiResponse.builder().message("Success").status("Account created successfully").build();
         }
-        if (!existingUser.isPresent()){
-            throw new UserNotFoundException("Error: No Account found!");
-
-        } else {
-            return apiResponse.builder().message("Invalid token").status("Failed").build();
-        }
+        throw new UserNotFoundException("Error: No Account found! or Invalid Token");
     }
 }
