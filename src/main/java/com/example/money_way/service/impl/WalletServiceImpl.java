@@ -63,6 +63,7 @@ public class WalletServiceImpl implements WalletService {
                     .bankName(walletResponse.getBank_name())
                     .accountNumber(walletResponse.getAccount_number())
                     .balance(BigDecimal.valueOf(0.00))
+                    .virtualAccountRef(request.getTx_ref())
                     .build();
             walletRepository.save(wallet);
         }else{
@@ -159,7 +160,7 @@ public class WalletServiceImpl implements WalletService {
                                 .currency(transactionResponseObject.getCurrency())
                                 .description(transactionResponseObject.getNarration())
                                 .amount(transactionResponseObject.getAmount())
-                                .txReferenceId(transactionResponseObject.getTx_ref())
+                                .virtualAccountRef(transactionResponseObject.getTx_ref())
                                 .providerStatus(transactionResponseObject.getAuth_model())
                                 .responseMessage(transactionResponseObject.getProcessor_response())
                                 .paymentType(transactionResponseObject.getPayment_type())
@@ -184,7 +185,7 @@ public class WalletServiceImpl implements WalletService {
 
         //Update wallet iff transaction was successful
         if (transaction.getStatus().equals(Status.SUCCESS)) {
-            Wallet wallet = walletRepository.findByUserId(appUtil.getLoggedInUser().getId())
+            Wallet wallet = walletRepository.findByVirtualAccountRef(transactionResponseObject.getTx_ref())
                     .orElseThrow(() -> new InvalidTransactionException("Wallet not funded"));
 
             wallet.setBalance(wallet.getBalance().add(transaction.getAmount()));

@@ -2,12 +2,9 @@ package com.example.money_way.model;
 
 import com.example.money_way.enums.Status;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -28,7 +25,7 @@ public class Transaction {
     @Column(nullable = false)
     private BigDecimal amount;
     @Column(nullable = false)
-    private String txReferenceId;
+    private String virtualAccountRef;
     private String description;
     private Status status;
     private String responseMessage;
