@@ -28,7 +28,6 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor
 public class WalletServiceImpl implements WalletService {
 
-
     private final UserRepository userRepository;
     private final WalletRepository walletRepository;
     private final RestTemplate restTemplate;
@@ -57,6 +56,7 @@ public class WalletServiceImpl implements WalletService {
                     .bankName(walletResponse.getBank_name())
                     .accountNumber(walletResponse.getAccount_number())
                     .balance(BigDecimal.valueOf(0.00))
+                    .virtualAccountRef(request.getTx_ref())
                     .build();
             walletRepository.save(wallet);
         }else{
