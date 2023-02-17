@@ -3,8 +3,10 @@ package com.example.money_way.configuration.mail;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
@@ -19,6 +21,7 @@ public class GmailEmailService implements EmailService{
 
     private final JavaMailSender mailSender;
 
+    @Async
     @Override
     public void sendEmail(String to, String subject, String message) {
 
