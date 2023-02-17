@@ -4,7 +4,7 @@ import com.example.money_way.dto.response.ApiResponse;
 import com.example.money_way.dto.webhook.VerifyTransaction;
 import com.example.money_way.dto.response.ViewWalletResponseDto;
 import com.example.money_way.dto.webhook.WebHookResponse;
-import com.example.money_way.services.WalletService;
+import com.example.money_way.service.WalletService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
