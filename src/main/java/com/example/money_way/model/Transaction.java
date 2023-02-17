@@ -8,6 +8,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Getter
@@ -35,6 +36,27 @@ public class Transaction {
     private String paymentType;
     @Column(nullable = false)
     private Long userId;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "createdAt")
+    private Date createdAt;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="last_updated")
+    private Date updatedAt;
+
+
+    @PrePersist
+    public void createdAt(){
+
+        this.createdAt = new Date();
+    }
+
+    @PreUpdate
+    public void updatedAt(){
+
+        this.updatedAt = new Date();
+    }
 
 
 }
