@@ -1,31 +1,42 @@
 package com.example.money_way.service.impl;
 
 import com.example.money_way.configuration.mail.EmailService;
+import com.example.money_way.dto.request.CreateWalletRequest;
 import com.example.money_way.configuration.security.CustomUserDetailService;
 import com.example.money_way.configuration.security.JwtUtils;
 import com.example.money_way.dto.request.LoginRequestDto;
 import com.example.money_way.dto.request.PasswordResetDTO;
+import com.example.money_way.dto.request.VerifyTokenDto;
 import com.example.money_way.dto.request.SignUpDto;
 import com.example.money_way.dto.response.ApiResponse;
 import com.example.money_way.exception.InvalidCredentialsException;
+import com.example.money_way.exception.UserNotFoundException;
 import com.example.money_way.exception.ValidationException;
 import com.example.money_way.model.User;
+import com.example.money_way.model.Wallet;
 import com.example.money_way.repository.UserRepository;
 import com.example.money_way.service.UserService;
+import com.example.money_way.service.WalletService;
 import com.example.money_way.utils.AppUtil;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import com.example.money_way.configuration.security.CustomUserDetailService;
+import com.example.money_way.configuration.security.JwtUtils;
+import com.example.money_way.dto.request.LoginRequestDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 
 @Service
 @Data
 @RequiredArgsConstructor
+
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -33,6 +44,7 @@ public class UserServiceImpl implements UserService {
     private final AppUtil appUtil;
     private final EmailService emailService;
 
+    private final WalletService walletService;
     private final AuthenticationManager authenticationManager;
     private final CustomUserDetailService customUserDetailService;
     private final JwtUtils jwtUtils;
@@ -62,7 +74,7 @@ public class UserServiceImpl implements UserService {
 
 
     }
-
+    
     @Override
     public ResponseEntity<String> login(LoginRequestDto request) {
         authenticationManager
@@ -74,6 +86,22 @@ public class UserServiceImpl implements UserService {
             return ResponseEntity.ok(jwtUtils.generateToken(user));
         }
         return ResponseEntity.status(400).body("Some Error Occurred");
+    }
+
+    @Override
+    public ApiResponse verifyLink(VerifyTokenDto verifyTokenDto) {
+
+        Optional<User> existingUser = userRepository.findByConfirmationToken(verifyTokenDto.getToken());
+        if (existingUser.isPresent()) {
+            existingUser.get().setConfirmationToken(null);
+            existingUser.get().setActive(true);
+            CreateWalletRequest request = new CreateWalletRequest();
+            request.setEmail(existingUser.get().getEmail());
+            request.setBvn(existingUser.get().getBvn());
+            walletService.createWallet(request);
+            return ApiResponse.builder().message("Success").status("Account created successfully").build();
+        }
+        throw new UserNotFoundException("Error: No Account found! or Invalid Token");
     }
 
     @Override
