@@ -1,25 +1,13 @@
 package com.example.money_way.service.impl;
 
 import com.example.money_way.configuration.mail.EmailService;
-
-import com.example.money_way.configuration.mail.EmailService;
-import com.example.money_way.dto.request.PasswordResetDTO;
-import com.example.money_way.dto.response.ApiResponse;
-import com.example.money_way.exception.InvalidCredentialsException;
-import com.example.money_way.model.User;
-import com.example.money_way.repository.UserRepository;
-import com.example.money_way.service.UserService;
-import com.example.money_way.utils.AppUtil;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
 import com.example.money_way.configuration.security.CustomUserDetailService;
 import com.example.money_way.configuration.security.JwtUtils;
 import com.example.money_way.dto.request.LoginRequestDto;
+import com.example.money_way.dto.request.PasswordResetDTO;
 import com.example.money_way.dto.request.SignUpDto;
 import com.example.money_way.dto.response.ApiResponse;
+import com.example.money_way.exception.InvalidCredentialsException;
 import com.example.money_way.exception.ValidationException;
 import com.example.money_way.model.User;
 import com.example.money_way.repository.UserRepository;
