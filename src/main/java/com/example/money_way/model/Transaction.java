@@ -16,9 +16,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 @Table(name = "transaction_tbl")
-public class Transaction extends Base {
+public class Transaction {
 
-    private Long flutterTransactionId;
+    @Id
+    @Column(nullable = false)
+    private Long transactionId;
 
     @Column(nullable = false)
     private String currency;
