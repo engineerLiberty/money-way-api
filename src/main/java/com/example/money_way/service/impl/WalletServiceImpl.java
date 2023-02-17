@@ -160,14 +160,17 @@ public class WalletServiceImpl implements WalletService {
                                 .description(transactionResponseObject.getNarration())
                                 .amount(transactionResponseObject.getAmount())
                                 .txReferenceId(transactionResponseObject.getTx_ref())
+                                .providerStatus(transactionResponseObject.getAuth_model())
+                                .responseMessage(transactionResponseObject.getProcessor_response())
+                                .paymentType(transactionResponseObject.getPayment_type())
                                 .build());
 
 
-        //If transaction had been confirmed return;
+        //If transaction gotten from the db had been confirmed already then return;
         if (transaction.getStatus().equals(Status.SUCCESS)) {
             return;
         }
-        //Verify that the status of the transaction is successful
+        //Verify that the status of the transaction returned from flutter is successful
         if (transactionResponseObject.getStatus().equalsIgnoreCase(Status.SUCCESS.name())) {
             transaction.setStatus(Status.SUCCESS);
         }
@@ -175,19 +178,6 @@ public class WalletServiceImpl implements WalletService {
         else if (!transactionResponseObject.getCurrency().equalsIgnoreCase(transaction.getCurrency())) {
             throw new InvalidTransactionException("Currency mismatch");
         }
-
-        // Update transaction amount with the actual amount paid.
-        transaction.setAmount(transactionResponseObject.getAmount());
-
-        //Set transaction status accordingly
-        transaction.setStatus(!transaction.getStatus().name().equalsIgnoreCase(Status.SUCCESS.name()) ?
-                Status.FAILED : Status.SUCCESS);
-
-        //Update other fields
-        transaction.setTransactionId(transactionResponseObject.getId());
-        transaction.setProviderStatus(transactionResponseObject.getAuth_model());
-        transaction.setResponseMessage(transactionResponseObject.getProcessor_response());
-        transaction.setPaymentType(transactionResponseObject.getPayment_type());
 
         //Update/create transaction history
         transactionRepository.save(transaction);

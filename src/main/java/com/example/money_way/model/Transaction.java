@@ -34,8 +34,6 @@ public class Transaction {
     private String responseMessage;
     private String providerStatus;
     private String paymentType;
-    @Column(nullable = false)
-    private Long userId;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "createdAt")
