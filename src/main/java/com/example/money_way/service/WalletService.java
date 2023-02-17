@@ -12,7 +12,7 @@ public interface WalletService {
     ApiResponse<ViewWalletResponseDto> viewBalance();
     ApiResponse createWallet(CreateWalletRequest request);
 
-    ApiResponse<VerifyTransaction> verifyPayment(String trasactionId);
+    ApiResponse<VerifyTransaction> verifyPayment(String transactionId);
 
     ResponseEntity<String> processWebHookEvent(WebHookResponse<VerifyTransaction> webHookResponse);
 
