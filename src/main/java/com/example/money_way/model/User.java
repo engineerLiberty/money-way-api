@@ -1,7 +1,5 @@
 package com.example.money_way.model;
-
 import lombok.*;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -15,9 +13,8 @@ import javax.persistence.Table;
 @Table(name = "user_tbl")
 public class User extends Person{
     @Column(nullable = false)
-    private Integer pin;
+    private String pin;
     private String bvn;
     private String confirmationToken;
     private boolean isActive;
 }
-
