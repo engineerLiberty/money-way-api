@@ -14,4 +14,5 @@ import javax.persistence.Table;
 @Table(name = "bankL_list_tbl")
 public class BankList extends Base{
     private String bankName;
+    private String bankCode;
 }

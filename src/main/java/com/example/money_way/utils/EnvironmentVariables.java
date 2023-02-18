@@ -13,4 +13,6 @@ public class EnvironmentVariables {
 
     @Value("${app.create_wallet}")
     private String createWalletUrl;
+    @Value("${app.get_banks}")
+    private String getBankUrl;
 }

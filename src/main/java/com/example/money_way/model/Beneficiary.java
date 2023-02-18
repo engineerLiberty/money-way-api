@@ -3,9 +3,7 @@ package com.example.money_way.model;
 import com.example.money_way.enums.Type;
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Getter
@@ -19,6 +17,7 @@ public class Beneficiary extends Base{
     private String accountNumber;
     private String phoneNumber;
     private String email;
+    @Enumerated(EnumType.STRING)
     private Type type;
     private String bankName;
     @Column(nullable = false)
