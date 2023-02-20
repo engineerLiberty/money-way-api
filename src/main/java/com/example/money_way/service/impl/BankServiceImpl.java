@@ -1,12 +1,14 @@
 package com.example.money_way.service.impl;
 
-import com.example.money_way.dto.response.ApiResponse;
 import com.example.money_way.dto.response.BanksResponse;
-import com.example.money_way.model.BankList;
-import com.example.money_way.repository.BankListRepository;
-import com.example.money_way.service.BankListService;
+import com.example.money_way.model.Bank;
+import com.example.money_way.repository.BankRepository;
+import com.example.money_way.service.BankService;
 import com.example.money_way.utils.EnvironmentVariables;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -14,28 +16,21 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
-public class BankListServiceImpl implements BankListService {
+public class BankServiceImpl implements BankService {
 
-    private final BankListRepository bankListRepository;
+    private final BankRepository bankListRepository;
     private final RestTemplate restTemplate;
     private final EnvironmentVariables environmentVariables;
     @Override
-    public ApiResponse<List<BankList>> getAllBanks() {
+    public Page<Bank> getAllBanks(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
 
-        List<BankList> bankLists = bankListRepository.findAll();
-
-        ApiResponse<List<BankList>> apiResponse = new ApiResponse<>();
-        apiResponse.setStatus("Success");
-        apiResponse.setMessage("List of All Available Banks");
-        apiResponse.setData(bankLists);
-
-        return apiResponse;
+        return bankListRepository.findAll(pageable);
     }
 
     @Override
@@ -52,10 +47,10 @@ public class BankListServiceImpl implements BankListService {
         if (banksResponse != null && banksResponse.getStatus().equalsIgnoreCase("SUCCESS")) {
 
             for(Map<String, String> bank : banksResponse.getData()){
-                Optional<BankList> bankList = bankListRepository.findByBankName(bank.get("name"));
+                Optional<Bank> bankList = bankListRepository.findByBankName(bank.get("name"));
 
                 if(bankList.isEmpty()){
-                    BankList newBank = new BankList(
+                    Bank newBank = new Bank(
                             bank.get("name"), bank.get("code")
                     );
                     bankListRepository.save(newBank);

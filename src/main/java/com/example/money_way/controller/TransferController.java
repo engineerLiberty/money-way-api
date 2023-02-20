@@ -1,8 +1,8 @@
 package com.example.money_way.controller;
 
-import com.example.money_way.dto.request.TransferBankDto;
+import com.example.money_way.dto.request.TransferToBankDto;
 import com.example.money_way.dto.response.ApiResponse;
-import com.example.money_way.dto.response.TransferBankResponse;
+import com.example.money_way.dto.response.TransferToBankResponse;
 import com.example.money_way.service.TransferService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,14 +22,14 @@ public class TransferController {
     }
 
     @PostMapping("/bank")
-    public ResponseEntity<ApiResponse> transferToBank(@RequestBody TransferBankDto transferBankDto) {
-        return ResponseEntity.ok(transferService.transferToBank(transferBankDto));
+    public ResponseEntity<ApiResponse> transferToBank(@RequestBody TransferToBankDto transferToBankDto) {
+        return ResponseEntity.ok(transferService.transferToBank(transferToBankDto));
     }
 
     @PostMapping("/bank/response")
     public ResponseEntity<String> updateTransferToBankResponse(
-            @RequestBody TransferBankResponse transferBankResponse) {
-        transferService.updateTransferToBankResponse(transferBankResponse);
+            @RequestBody TransferToBankResponse transferToBankResponse) {
+        transferService.updateTransferToBankResponse(transferToBankResponse);
         return ResponseEntity.ok("Transfer Response Updated");
     }
 }

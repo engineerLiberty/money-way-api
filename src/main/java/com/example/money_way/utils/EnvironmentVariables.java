@@ -14,13 +14,13 @@ public class EnvironmentVariables {
     @Value("${app.create_wallet}")
     private String createWalletUrl;
 
-    @Value("${app.get_banks}")
+    @Value("${app.flutter_base_url}"+"${app.flutter_endpoint_to_fetch_all_banks}")
     private String getBankUrl;
-    @Value("${app.get_transfer_fee}")
+    @Value("${app.flutter_base_url}"+"${app.flutter_endpoint_to_fetch_transfer_fee}")
     private String getTransferFeeUrl;
-    @Value("${app.transfer_bank}")
+    @Value("${app.flutter_base_url}"+"${app.flutter_endpoint_to_transfer_to_bank}")
     private String getTransferToBankUrl;
-    @Value("${app.retry_transfer_bank}")
+    @Value("${app.flutter_base_url}"+"${app.flutter_endpoint_to_retry_transfer_to_bank}")
     private String getRetryTransferToBankUrl;
 
     @Value("${app.verify_transaction_endpoint}")

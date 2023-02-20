@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.Map;
 
 @Data
-public class TransferBankResponse {
+public class TransferToBankResponse {
     private String status;
     private String message;
     private Map<String, ?> data;

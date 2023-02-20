@@ -1,9 +1,9 @@
 package com.example.money_way.service.impl;
 
-import com.example.money_way.dto.request.TransferBankDto;
-import com.example.money_way.dto.request.TransferBankRequest;
+import com.example.money_way.dto.request.TransferToBankDto;
+import com.example.money_way.dto.request.TransferToBankRequest;
 import com.example.money_way.dto.response.ApiResponse;
-import com.example.money_way.dto.response.TransferBankResponse;
+import com.example.money_way.dto.response.TransferToBankResponse;
 import com.example.money_way.dto.response.TransferFeeResponse;
 import com.example.money_way.enums.Status;
 import com.example.money_way.enums.Type;
@@ -37,7 +37,7 @@ public class TransferServiceImpl implements TransferService {
     private final EnvironmentVariables environmentVariables;
     private final AppUtil appUtil;
     private final WalletRepository walletRepository;
-    private final BankListRepository bankListRepository;
+    private final BankRepository bankListRepository;
     private final PasswordEncoder passwordEncoder;
     private final TransferRepository transferRepository;
     private final TransactionRepository transactionRepository;
@@ -71,14 +71,14 @@ public class TransferServiceImpl implements TransferService {
 
     @Override
     @Transactional
-    public ApiResponse transferToBank(TransferBankDto transferBankDto) {
+    public ApiResponse transferToBank(TransferToBankDto transferToBankDto) {
 
         User user = appUtil.getLoggedInUser();
         Wallet wallet = walletRepository.findByUserId(user.getId())
                 .orElseThrow();
 
-        BigDecimal fee = getTransferFee(transferBankDto.getAmount()).getData();
-        BigDecimal total = transferBankDto.getAmount().add(fee);
+        BigDecimal fee = getTransferFee(transferToBankDto.getAmount()).getData();
+        BigDecimal total = transferToBankDto.getAmount().add(fee);
 
         //Checking if user balance is greater than amount + fee
         if (wallet.getBalance().compareTo(total) < 0){
@@ -86,7 +86,7 @@ public class TransferServiceImpl implements TransferService {
         }
 
         //Checking if user pin matches
-        if (!passwordEncoder.matches(transferBankDto.getPin(), user.getPin())) {
+        if (!passwordEncoder.matches(transferToBankDto.getPin(), user.getPin())) {
             throw new InvalidCredentialsException("Incorrect Pin");
         }
 
@@ -98,72 +98,72 @@ public class TransferServiceImpl implements TransferService {
         String ref = appUtil.generateReference();
 
         //Finding bank by name and getting the bank code
-        BankList bankList = bankListRepository.findByBankName(transferBankDto.getAccount_bank())
+        Bank bankList = bankListRepository.findByBankName(transferToBankDto.getAccount_bank())
                 .orElseThrow();
         String bankCode = bankList.getBankCode();
 
-        TransferBankRequest requestBody = TransferBankRequest.builder()
+        TransferToBankRequest requestBody = TransferToBankRequest.builder()
                 .account_bank("044")
                 .account_number("0690000031")
-                .amount(transferBankDto.getAmount())
-                .narration(transferBankDto.getDescription())
+                .amount(transferToBankDto.getAmount())
+                .narration(transferToBankDto.getDescription())
                 .currency("NGN")
                 .reference(ref + "_PMCK_ST_FDU_1")
                 .build();
 
-        HttpEntity<TransferBankRequest> entity = new HttpEntity<>(requestBody, headers);
+        HttpEntity<TransferToBankRequest> entity = new HttpEntity<>(requestBody, headers);
 
-        TransferBankResponse transferBankResponse = restTemplate.exchange(environmentVariables.getGetTransferToBankUrl(),
-                HttpMethod.POST, entity, TransferBankResponse.class).getBody();
+        TransferToBankResponse transferToBankResponse = restTemplate.exchange(environmentVariables.getGetTransferToBankUrl(),
+                HttpMethod.POST, entity, TransferToBankResponse.class).getBody();
 
         //checking if transfer not queued successfully, then retry transfer
-        if (transferBankResponse != null && !transferBankResponse.getStatus().equalsIgnoreCase("success")){
+        if (transferToBankResponse != null && !transferToBankResponse.getStatus().equalsIgnoreCase("success")){
             Map<String, String> uriVariables = new HashMap<>();
-            uriVariables.put("id", (String) transferBankResponse.getData().get("id"));
+            uriVariables.put("id", (String) transferToBankResponse.getData().get("id"));
 
-            transferBankResponse = restTemplate.exchange(environmentVariables.getGetRetryTransferToBankUrl(),
-                    HttpMethod.POST, entity, TransferBankResponse.class, uriVariables).getBody();
+            transferToBankResponse = restTemplate.exchange(environmentVariables.getGetRetryTransferToBankUrl(),
+                    HttpMethod.POST, entity, TransferToBankResponse.class, uriVariables).getBody();
         }
 
         //checking if transfer queued successfully
-        if (transferBankResponse != null && transferBankResponse.getStatus().equalsIgnoreCase("success")){
+        if (transferToBankResponse != null && transferToBankResponse.getStatus().equalsIgnoreCase("success")){
             //Subtracting total from user wallet balance
             wallet.setBalance(wallet.getBalance().subtract(total));
             walletRepository.save(wallet);
 
             //Saving transfer to database
             Transfer transfer = new Transfer();
-            transfer.setBankName(transferBankDto.getAccount_bank());
-            transfer.setAccountNumber(transferBankDto.getAccount_number());
-            transfer.setDescription(transferBankDto.getDescription());
+            transfer.setBankName(transferToBankDto.getAccount_bank());
+            transfer.setAccountNumber(transferToBankDto.getAccount_number());
+            transfer.setDescription(transferToBankDto.getDescription());
             transfer.setReferenceId(ref);
-            transfer.setAmount(transferBankDto.getAmount());
+            transfer.setAmount(transferToBankDto.getAmount());
             transfer.setUserId(user.getId());
             transferRepository.save(transfer);
 
             //Saving transaction to database
             Transaction transaction = new Transaction();
-            transaction.setTransactionId(Long.valueOf((Integer) transferBankResponse.getData().get("id")));
-            transaction.setCurrency((String) transferBankResponse.getData().get("currency"));
-            transaction.setAmount(BigDecimal.valueOf((Integer) transferBankResponse.getData().get("amount")));
-            transaction.setVirtualAccountRef((String) transferBankResponse.getData().get("reference"));
-            transaction.setDescription((String) transferBankResponse.getData().get("narration"));
+            transaction.setTransactionId(Long.valueOf((Integer) transferToBankResponse.getData().get("id")));
+            transaction.setCurrency((String) transferToBankResponse.getData().get("currency"));
+            transaction.setAmount(BigDecimal.valueOf((Integer) transferToBankResponse.getData().get("amount")));
+            transaction.setVirtualAccountRef((String) transferToBankResponse.getData().get("reference"));
+            transaction.setDescription((String) transferToBankResponse.getData().get("narration"));
             transaction.setStatus(Status.PENDING);
-            transaction.setResponseMessage(transferBankResponse.getMessage());
-            transaction.setProviderStatus((String) transferBankResponse.getData().get("status"));
+            transaction.setResponseMessage(transferToBankResponse.getMessage());
+            transaction.setProviderStatus((String) transferToBankResponse.getData().get("status"));
             transaction.setPaymentType("BANK");
             transaction.setUserId(user.getId());
             transactionRepository.save(transaction);
 
             //Checking if user wants to save beneficiary
-            if (transferBankDto.getSaveBeneficiary()){
+            if (transferToBankDto.getSaveBeneficiary()){
                 Optional<Beneficiary> beneficiary = beneficiaryRepository
-                        .findByAccountNumberAndUserId(transferBankDto.getAccount_number(), user.getId());
+                        .findByAccountNumberAndUserId(transferToBankDto.getAccount_number(), user.getId());
 
                 if (beneficiary.isEmpty()){
                     Beneficiary newBeneficiary = new Beneficiary();
-                    newBeneficiary.setName(transferBankDto.getBeneficiaryName());
-                    newBeneficiary.setBankName(transferBankDto.getAccount_bank());
+                    newBeneficiary.setName(transferToBankDto.getBeneficiaryName());
+                    newBeneficiary.setBankName(transferToBankDto.getAccount_bank());
                     newBeneficiary.setAccountNumber(transfer.getAccountNumber());
                     newBeneficiary.setType(Type.BANK);
                     newBeneficiary.setUserId(user.getId());
@@ -174,17 +174,17 @@ public class TransferServiceImpl implements TransferService {
         }
 
         ApiResponse<Map<String, ?>> apiResponse = new ApiResponse<>();
-        assert transferBankResponse != null;
+        assert transferToBankResponse != null;
         apiResponse.setStatus("PENDING");
-        apiResponse.setMessage(transferBankResponse.getMessage());
+        apiResponse.setMessage(transferToBankResponse.getMessage());
 
         return apiResponse;
     }
 
     @Override
     @Transactional
-    public void updateTransferToBankResponse(TransferBankResponse transferBankResponse) {
-        Map<String, ?> data = transferBankResponse.getData();
+    public void updateTransferToBankResponse(TransferToBankResponse transferToBankResponse) {
+        Map<String, ?> data = transferToBankResponse.getData();
 
         //fetching transaction to be updated
         Transaction transaction = transactionRepository
