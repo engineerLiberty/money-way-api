@@ -1,7 +1,7 @@
 package com.example.money_way.service.impl;
 
-import com.example.money_way.dto.request.CreateWalletRequest;
 import com.example.money_way.dto.response.ApiResponse;
+import com.example.money_way.dto.response.BanksResponse;
 import com.example.money_way.model.BankList;
 import com.example.money_way.repository.BankListRepository;
 import com.example.money_way.service.BankListService;
@@ -44,16 +44,14 @@ public class BankListServiceImpl implements BankListService {
         headers.add("Authorization", "Bearer " + environmentVariables.getFLW_SECRET_KEY());
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<CreateWalletRequest> entity = new HttpEntity<>(headers);
+        HttpEntity<?> entity = new HttpEntity<>(headers);
 
-        ApiResponse apiResponse = restTemplate.exchange(environmentVariables.getGetBankUrl(),
-                HttpMethod.GET, entity, ApiResponse.class).getBody();
+        BanksResponse banksResponse = restTemplate.exchange(environmentVariables.getGetBankUrl(),
+                HttpMethod.GET, entity, BanksResponse.class).getBody();
 
-        if (apiResponse != null && apiResponse.getStatus().equalsIgnoreCase("SUCCESS")) {
+        if (banksResponse != null && banksResponse.getStatus().equalsIgnoreCase("SUCCESS")) {
 
-            List<Map<String, String>> banks = (List<Map<String, String>>) apiResponse.getData();
-
-            for(Map<String, String> bank : banks){
+            for(Map<String, String> bank : banksResponse.getData()){
                 Optional<BankList> bankList = bankListRepository.findByBankName(bank.get("name"));
 
                 if(bankList.isEmpty()){

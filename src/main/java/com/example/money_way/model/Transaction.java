@@ -27,6 +27,7 @@ public class Transaction extends Base {
     @Column(nullable = false)
     private String txReferenceId;
     private String description;
+    @Enumerated(EnumType.STRING)
     private Status status;
     private String responseMessage;
     private String providerStatus;
