@@ -15,4 +15,10 @@ public class EnvironmentVariables {
     private String createWalletUrl;
     @Value("${app.get_banks}")
     private String getBankUrl;
+    @Value("${app.get_transfer_fee}")
+    private String getTransferFeeUrl;
+    @Value("${app.transfer_bank}")
+    private String getTransferToBankUrl;
+    @Value("${app.retry_transfer_bank}")
+    private String getRetryTransferToBankUrl;
 }

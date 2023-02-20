@@ -15,9 +15,11 @@ public class TransferBankDto {
     private String account_bank;
     @NotBlank(message = "Account number cannot be blank")
     private String account_number;
+    private String beneficiaryName;
     @NotBlank(message = "Amount cannot be blank")
     private BigDecimal amount;
     @NotBlank(message = "pin cannot be blank")
     private String pin;
     private String description;
+    private Boolean saveBeneficiary;
 }
