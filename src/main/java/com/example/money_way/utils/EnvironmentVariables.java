@@ -13,6 +13,7 @@ public class EnvironmentVariables {
 
     @Value("${app.create_wallet}")
     private String createWalletUrl;
+
     @Value("${app.get_banks}")
     private String getBankUrl;
     @Value("${app.get_transfer_fee}")
@@ -21,4 +22,11 @@ public class EnvironmentVariables {
     private String getTransferToBankUrl;
     @Value("${app.retry_transfer_bank}")
     private String getRetryTransferToBankUrl;
+
+    @Value("${app.verify_transaction_endpoint}")
+    private String verifyTransactionEndpoint;
+
+    @Value("${app.WEBHOOK_VERIFY_HASH}")
+    private String WEBHOOK_VERIFY_HASH;
+
 }
