@@ -13,6 +13,8 @@ import java.math.BigDecimal;
 public class TransferToBankDto {
     @NotBlank(message = "Bank name cannot be blank")
     private String account_bank;
+    @NotBlank(message = "Bank code cannot be blank")
+    private String bankCode;
     @NotBlank(message = "Account number cannot be blank")
     private String account_number;
     private String beneficiaryName;

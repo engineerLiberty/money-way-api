@@ -22,8 +22,8 @@ public class BankServiceImpl implements BankService {
     private final RestTemplateUtil restTemplateUtil;
 
     @Override
-    public Page<Bank> getAllBanks(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public Page<Bank> getAllBanks(int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
 
         return bankListRepository.findAll(pageable);
     }
@@ -36,7 +36,7 @@ public class BankServiceImpl implements BankService {
         if (banksResponse != null && banksResponse.getStatus().equalsIgnoreCase("SUCCESS")) {
 
             for(Map<String, String> bank : banksResponse.getData()){
-                Optional<Bank> bankList = bankListRepository.findByBankName(bank.get("name"));
+                Optional<Bank> bankList = bankListRepository.findByBankCode(bank.get("code"));
 
                 if(bankList.isEmpty()){
                     Bank newBank = new Bank(

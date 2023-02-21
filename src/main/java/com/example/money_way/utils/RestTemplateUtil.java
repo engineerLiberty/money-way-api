@@ -5,6 +5,7 @@ import com.example.money_way.dto.request.TransferToBankRequest;
 import com.example.money_way.dto.response.BanksResponse;
 import com.example.money_way.dto.response.TransferFeeResponse;
 import com.example.money_way.dto.response.TransferToBankResponse;
+import com.example.money_way.model.Bank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -54,7 +55,7 @@ public class RestTemplateUtil {
     }
 
     public TransferToBankResponse transferToBankWithFlutterwave(
-            TransferToBankDto transferToBankDto, String bankCode, String ref){
+            TransferToBankDto transferToBankDto, Bank bank, String ref){
         HttpHeaders headers = headersForFlutterwave();
 
         TransferToBankRequest requestBody = TransferToBankRequest.builder()

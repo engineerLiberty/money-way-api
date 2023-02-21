@@ -1,6 +1,6 @@
 package com.example.money_way.model;
 
-import com.example.money_way.enums.Type;
+import com.example.money_way.enums.TransactionType;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.AllArgsConstructor;
@@ -27,7 +27,7 @@ public class Beneficiary extends Base{
     private String phoneNumber;
     private String email;
     @Enumerated(EnumType.STRING)
-    private Type type;
+    private TransactionType transactionType;
     private String bankName;
     @Column(nullable = false)
     private Long userId;

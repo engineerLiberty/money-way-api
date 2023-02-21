@@ -5,7 +5,7 @@ import org.springframework.data.domain.Page;
 
 public interface BankService {
 
-    Page<Bank> getAllBanks(int page, int size);
+    Page<Bank> getAllBanks(int pageNo, int pageSize);
 
     void updateBankList();
 }

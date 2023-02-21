@@ -18,7 +18,7 @@ public class BankController {
 
     @GetMapping()
     public ResponseEntity<Page<Bank>> viewBalance(
-            @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
-        return ResponseEntity.ok(bankListService.getAllBanks(page, size));
+            @RequestParam(defaultValue = "0") int pageNo, @RequestParam(defaultValue = "10") int pageSize){
+        return ResponseEntity.ok(bankListService.getAllBanks(pageNo, pageSize));
     }
 }

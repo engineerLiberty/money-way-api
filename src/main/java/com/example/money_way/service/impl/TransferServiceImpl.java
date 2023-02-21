@@ -5,7 +5,7 @@ import com.example.money_way.dto.response.ApiResponse;
 import com.example.money_way.dto.response.TransferFeeResponse;
 import com.example.money_way.dto.response.TransferToBankResponse;
 import com.example.money_way.enums.Status;
-import com.example.money_way.enums.Type;
+import com.example.money_way.enums.TransactionType;
 import com.example.money_way.exception.InvalidCredentialsException;
 import com.example.money_way.exception.InvalidTransactionException;
 import com.example.money_way.model.Bank;
@@ -85,12 +85,11 @@ public class TransferServiceImpl implements TransferService {
         String ref = appUtil.generateReference();
 
         //Finding bank by name and getting the bank code
-        Bank bankList = bankListRepository.findByBankName(transferToBankDto.getAccount_bank())
+        Bank bank = bankListRepository.findByBankCode(transferToBankDto.getBankCode())
                 .orElseThrow();
-        String bankCode = bankList.getBankCode();
 
         TransferToBankResponse transferToBankResponse = restTemplateUtil.transferToBankWithFlutterwave(
-                transferToBankDto, bankCode, ref
+                transferToBankDto, bank, ref
         );
 
         //checking if transfer not queued successfully, then retry transfer
@@ -140,7 +139,7 @@ public class TransferServiceImpl implements TransferService {
                     newBeneficiary.setName(transferToBankDto.getBeneficiaryName());
                     newBeneficiary.setBankName(transferToBankDto.getAccount_bank());
                     newBeneficiary.setAccountNumber(transfer.getAccountNumber());
-                    newBeneficiary.setType(Type.BANK);
+                    newBeneficiary.setTransactionType(TransactionType.BANK);
                     newBeneficiary.setUserId(user.getId());
 
                     beneficiaryRepository.save(newBeneficiary);
