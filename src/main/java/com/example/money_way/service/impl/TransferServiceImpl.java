@@ -8,13 +8,11 @@ import com.example.money_way.enums.Status;
 import com.example.money_way.enums.TransactionType;
 import com.example.money_way.exception.InvalidCredentialsException;
 import com.example.money_way.exception.InvalidTransactionException;
-import com.example.money_way.model.Bank;
 import com.example.money_way.model.User;
 import com.example.money_way.model.Wallet;
 import com.example.money_way.model.Transaction;
 import com.example.money_way.model.Transfer;
 import com.example.money_way.model.Beneficiary;
-import com.example.money_way.repository.BankRepository;
 import com.example.money_way.repository.TransactionRepository;
 import com.example.money_way.repository.TransferRepository;
 import com.example.money_way.repository.WalletRepository;
@@ -39,7 +37,6 @@ public class TransferServiceImpl implements TransferService {
     private final AppUtil appUtil;
     private final RestTemplateUtil restTemplateUtil;
     private final WalletRepository walletRepository;
-    private final BankRepository bankListRepository;
     private final PasswordEncoder passwordEncoder;
     private final TransferRepository transferRepository;
     private final TransactionRepository transactionRepository;
@@ -84,12 +81,8 @@ public class TransferServiceImpl implements TransferService {
         //Generating a reference code
         String ref = appUtil.generateReference();
 
-        //Finding bank by name and getting the bank code
-        Bank bank = bankListRepository.findByBankCode(transferToBankDto.getBankCode())
-                .orElseThrow();
-
         TransferToBankResponse transferToBankResponse = restTemplateUtil.transferToBankWithFlutterwave(
-                transferToBankDto, bank, ref
+                transferToBankDto, ref
         );
 
         //checking if transfer not queued successfully, then retry transfer

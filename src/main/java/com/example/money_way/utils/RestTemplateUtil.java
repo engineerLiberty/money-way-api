@@ -55,16 +55,16 @@ public class RestTemplateUtil {
     }
 
     public TransferToBankResponse transferToBankWithFlutterwave(
-            TransferToBankDto transferToBankDto, Bank bank, String ref){
+            TransferToBankDto transferToBankDto, String ref){
         HttpHeaders headers = headersForFlutterwave();
 
         TransferToBankRequest requestBody = TransferToBankRequest.builder()
-                .account_bank("044")
-                .account_number("0690000031")
+                .account_bank(transferToBankDto.getBankCode())
+                .account_number(transferToBankDto.getAccount_number())
                 .amount(transferToBankDto.getAmount())
                 .narration(transferToBankDto.getDescription())
                 .currency("NGN")
-                .reference(ref + "_PMCKDU_1")
+                .reference(ref)
                 .build();
 
         HttpEntity<TransferToBankRequest> entity = new HttpEntity<>(requestBody, headers);
