@@ -1,9 +1,18 @@
 package com.example.money_way.model;
 
 import com.example.money_way.enums.Type;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Builder;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Enumerated;
+import javax.persistence.EnumType;
+import javax.persistence.Column;
+
 
 @Entity
 @Getter

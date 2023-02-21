@@ -1,41 +1,43 @@
 package com.example.money_way.service.impl;
 
 import com.example.money_way.dto.request.TransferToBankDto;
-import com.example.money_way.dto.request.TransferToBankRequest;
 import com.example.money_way.dto.response.ApiResponse;
-import com.example.money_way.dto.response.TransferToBankResponse;
 import com.example.money_way.dto.response.TransferFeeResponse;
+import com.example.money_way.dto.response.TransferToBankResponse;
 import com.example.money_way.enums.Status;
 import com.example.money_way.enums.Type;
 import com.example.money_way.exception.InvalidCredentialsException;
 import com.example.money_way.exception.InvalidTransactionException;
-import com.example.money_way.model.*;
-import com.example.money_way.repository.*;
+import com.example.money_way.model.Bank;
+import com.example.money_way.model.User;
+import com.example.money_way.model.Wallet;
+import com.example.money_way.model.Transaction;
+import com.example.money_way.model.Transfer;
+import com.example.money_way.model.Beneficiary;
+import com.example.money_way.repository.BankRepository;
+import com.example.money_way.repository.TransactionRepository;
+import com.example.money_way.repository.TransferRepository;
+import com.example.money_way.repository.WalletRepository;
+import com.example.money_way.repository.UserRepository;
+import com.example.money_way.repository.BeneficiaryRepository;
 import com.example.money_way.service.TransferService;
 import com.example.money_way.utils.AppUtil;
-import com.example.money_way.utils.EnvironmentVariables;
+import com.example.money_way.utils.RestTemplateUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
+
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
 public class TransferServiceImpl implements TransferService {
-    private final RestTemplate restTemplate;
-    private final EnvironmentVariables environmentVariables;
     private final AppUtil appUtil;
+    private final RestTemplateUtil restTemplateUtil;
     private final WalletRepository walletRepository;
     private final BankRepository bankListRepository;
     private final PasswordEncoder passwordEncoder;
@@ -46,19 +48,8 @@ public class TransferServiceImpl implements TransferService {
 
     @Override
     public ApiResponse<BigDecimal> getTransferFee(BigDecimal amount) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + environmentVariables.getFLW_SECRET_KEY());
-        headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<?> entity = new HttpEntity<>(headers);
-
-        UriComponentsBuilder url = UriComponentsBuilder
-                .fromUriString(environmentVariables.getGetTransferFeeUrl())
-                .queryParam("amount", amount)
-                .queryParam("currency", "NGN");
-
-        TransferFeeResponse feeResponse = restTemplate.exchange(url.toUriString(),
-                HttpMethod.GET, entity, TransferFeeResponse.class).getBody();
+        TransferFeeResponse feeResponse = restTemplateUtil.getTransferFeeFromFlutterwave(amount);
 
         ApiResponse<BigDecimal> apiResponse = new ApiResponse<>();
         assert feeResponse != null;
@@ -90,10 +81,6 @@ public class TransferServiceImpl implements TransferService {
             throw new InvalidCredentialsException("Incorrect Pin");
         }
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + environmentVariables.getFLW_SECRET_KEY());
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
         //Generating a reference code
         String ref = appUtil.generateReference();
 
@@ -102,27 +89,15 @@ public class TransferServiceImpl implements TransferService {
                 .orElseThrow();
         String bankCode = bankList.getBankCode();
 
-        TransferToBankRequest requestBody = TransferToBankRequest.builder()
-                .account_bank("044")
-                .account_number("0690000031")
-                .amount(transferToBankDto.getAmount())
-                .narration(transferToBankDto.getDescription())
-                .currency("NGN")
-                .reference(ref + "_PMCK_ST_FDU_1")
-                .build();
-
-        HttpEntity<TransferToBankRequest> entity = new HttpEntity<>(requestBody, headers);
-
-        TransferToBankResponse transferToBankResponse = restTemplate.exchange(environmentVariables.getGetTransferToBankUrl(),
-                HttpMethod.POST, entity, TransferToBankResponse.class).getBody();
+        TransferToBankResponse transferToBankResponse = restTemplateUtil.transferToBankWithFlutterwave(
+                transferToBankDto, bankCode, ref
+        );
 
         //checking if transfer not queued successfully, then retry transfer
         if (transferToBankResponse != null && !transferToBankResponse.getStatus().equalsIgnoreCase("success")){
-            Map<String, String> uriVariables = new HashMap<>();
-            uriVariables.put("id", (String) transferToBankResponse.getData().get("id"));
 
-            transferToBankResponse = restTemplate.exchange(environmentVariables.getGetRetryTransferToBankUrl(),
-                    HttpMethod.POST, entity, TransferToBankResponse.class, uriVariables).getBody();
+            transferToBankResponse = restTemplateUtil.retryTransferToBankWithFlutterwave(
+                    transferToBankResponse);
         }
 
         //checking if transfer queued successfully

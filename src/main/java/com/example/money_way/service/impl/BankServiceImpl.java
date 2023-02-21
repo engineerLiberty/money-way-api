@@ -4,17 +4,12 @@ import com.example.money_way.dto.response.BanksResponse;
 import com.example.money_way.model.Bank;
 import com.example.money_way.repository.BankRepository;
 import com.example.money_way.service.BankService;
-import com.example.money_way.utils.EnvironmentVariables;
+import com.example.money_way.utils.RestTemplateUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
 import java.util.Optional;
@@ -24,8 +19,8 @@ import java.util.Optional;
 public class BankServiceImpl implements BankService {
 
     private final BankRepository bankListRepository;
-    private final RestTemplate restTemplate;
-    private final EnvironmentVariables environmentVariables;
+    private final RestTemplateUtil restTemplateUtil;
+
     @Override
     public Page<Bank> getAllBanks(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -35,14 +30,8 @@ public class BankServiceImpl implements BankService {
 
     @Override
     public void updateBankList() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + environmentVariables.getFLW_SECRET_KEY());
-        headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<?> entity = new HttpEntity<>(headers);
-
-        BanksResponse banksResponse = restTemplate.exchange(environmentVariables.getGetBankUrl(),
-                HttpMethod.GET, entity, BanksResponse.class).getBody();
+        BanksResponse banksResponse = restTemplateUtil.fetchAllBanksFromFlutterwave();
 
         if (banksResponse != null && banksResponse.getStatus().equalsIgnoreCase("SUCCESS")) {
 
