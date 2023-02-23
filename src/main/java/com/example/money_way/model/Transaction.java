@@ -29,6 +29,7 @@ public class Transaction {
     private String description;
     @Enumerated(EnumType.STRING)
     private Status status;
+    private String request_id;
     private String responseMessage;
     private String providerStatus;
     private String paymentType;
