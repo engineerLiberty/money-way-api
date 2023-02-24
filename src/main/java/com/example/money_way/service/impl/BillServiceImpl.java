@@ -14,8 +14,10 @@ import com.example.money_way.repository.WalletRepository;
 import com.example.money_way.service.BillService;
 import com.example.money_way.utils.AppUtil;
 import com.example.money_way.utils.EnvironmentVariables;
+import com.example.money_way.utils.RestTemplateUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,8 @@ public class BillServiceImpl implements BillService {
     private final TransactionRepository transactionRepository;
     private final WalletRepository walletRepository;
 
+    private final RestTemplateUtil restTemplateUtil;
+
 
     @Override
     public ApiResponse<TvPurchaseResponse> purchaseTvSubscription(TvPurchaseRequest request) {
@@ -45,10 +49,8 @@ public class BillServiceImpl implements BillService {
         Wallet wallet = walletRepository.findByUserId(userId).orElseThrow(() -> new ResourceNotFoundException("Wallet Not Found"));
         BigDecimal walletBalance = wallet.getBalance();
             if (walletBalance.compareTo(request.getAmount()) >= 0) {
-            org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
-            headers.add("api-key", environmentVariables.getVtPassApiKey());
-            headers.add("secret-key", environmentVariables.getVtPassSecretKey());
-            headers.setContentType(MediaType.APPLICATION_JSON);
+
+               HttpHeaders headers = restTemplateUtil.getVTPASS_Header();
 
             HttpEntity<TvPurchaseRequest> entity = new HttpEntity<>(request, headers);
             TvPurchaseResponse tvPurchaseResponse = restTemplate.exchange(environmentVariables.getPurchaseSubscriptionUrl(),
